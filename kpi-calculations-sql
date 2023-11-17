@@ -1,0 +1,69 @@
+Total complaints by month across all years
+
+WITH obt AS
+(SELECT * EXCEPT (update_timestamp)
+FROM 
+`cis4400project-384418.hot_water_complaints_dw.complaints_fact`
+INNER JOIN 
+`cis4400project-384418.hot_water_complaints_dw.agency_dimension` USING (agency_dim_id)
+INNER JOIN
+`cis4400project-384418.hot_water_complaints_dw.complaint_dimension` USING (complaint_dim_id)
+INNER JOIN `cis4400project-384418.hot_water_complaints_dw.date_dimension`
+ON (created_date_dim_id = date_dim_id)
+INNER JOIN
+`cis4400project-384418.hot_water_complaints_dw.location_dimension` USING (location_dim_id)
+)
+SELECT month_of_year, COUNT(complaint_type) AS complaint_count
+FROM obt
+GROUP BY month_of_year
+ORDER BY month_of_year ASC;
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Total complaints by city across all years
+
+WITH obt AS
+(SELECT * EXCEPT (update_timestamp)
+FROM 
+`cis4400project-384418.hot_water_complaints_dw.complaints_fact`
+INNER JOIN 
+`cis4400project-384418.hot_water_complaints_dw.agency_dimension` USING (agency_dim_id)
+INNER JOIN
+`cis4400project-384418.hot_water_complaints_dw.complaint_dimension` USING (complaint_dim_id)
+INNER JOIN
+`cis4400project-384418.hot_water_complaints_dw.date_dimension` ON (created_date_dim_id = date_dim_id)
+INNER JOIN
+`cis4400project-384418.hot_water_complaints_dw.location_dimension` USING (location_dim_id)
+)
+SELECT city, COUNT(complaint_type) AS complaint_count
+FROM obt
+GROUP BY city
+ORDER BY complaint_count DESC;
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Lowest temperature by month across all years
+
+WITH obt AS
+(SELECT * EXCEPT (update_timestamp)
+FROM `cis4400project-384418.weather_dw.weather_fact`
+INNER JOIN 
+`cis4400project-384418.weather_dw.date_dimension` ON (wdate_dim_id = date_dim_id)
+INNER JOIN 
+`cis4400project-384418.weather_dw.location_dimension` USING (location_dim_id)
+)
+SELECT month_of_year, MIN(temperature_m) AS lowest_temperature
+FROM obt
+GROUP BY month_of_year
+ORDER BY month_of_year
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Highest temperature by month across all years
+
+WITH obt AS
+(SELECT * EXCEPT (update_timestamp)
+FROM `cis4400project-384418.weather_dw.weather_fact`
+INNER JOIN 
+`cis4400project-384418.weather_dw.date_dimension` ON (wdate_dim_id = date_dim_id)
+INNER JOIN 
+`cis4400project-384418.weather_dw.location_dimension` USING (location_dim_id)
+)
+SELECT month_of_year, MAX(temperature_max) AS highest_temperature
+FROM obt
+GROUP BY month_of_year
+ORDER BY month_of_year
